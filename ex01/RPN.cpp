@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/04 02:47:07 by bkaztaou          #+#    #+#             */
-/*   Updated: 2024/08/04 06:18:22 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/08/05 04:04:14 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,11 +68,53 @@ void    RPN::calculate() {
 
     std::stack<int> tmp = _stack;
 
-    while (tmp.size() > 0) {
-        std::cout << tmp.top() << std::endl;
+    while (tmp.size() > 1) {
+        int dup = -1;
+        int a = tmp.top();
         tmp.pop();
+        int b = tmp.top();
+        tmp.pop();
+
+        if (tmp.size() == 0)
+            throw std::invalid_argument("Error");
+
+        if (tmp.top() < 10) {
+            dup = a;
+            a = b;
+            b = tmp.top();
+            tmp.pop();
+        }
+        
+        switch (tmp.top()) {
+        case 43:
+            tmp.pop();
+            tmp.push(a + b);
+            break;
+        case 45:
+            tmp.pop();
+            tmp.push(a - b);
+            break;
+        case 42:
+            tmp.pop();
+            tmp.push(a * b);
+            break;
+        case 47:
+            tmp.pop();
+            if (b == 0)
+                throw std::invalid_argument("Error");
+            tmp.push(a / b);
+            break;
+        default:
+            throw std::invalid_argument("Error");
+            break;
+        }
+        
+        if (dup != -1) {
+            tmp.push(dup);
+        }
     }
-    
+
+    std::cout << tmp.top() << std::endl;
 }
 
 RPN::~RPN() {}
