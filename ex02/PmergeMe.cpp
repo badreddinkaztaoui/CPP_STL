@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 06:08:20 by bkaztaou          #+#    #+#             */
-/*   Updated: 2024/08/05 11:57:33 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/08/09 04:56:49 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,13 @@ PmergeMe & PmergeMe::operator=(const PmergeMe &src) {
     return *this;
 }
 
+std::vector<int> & PmergeMe::getV() {
+    return this->_v;
+}
+
+std::deque<int> & PmergeMe::getD() {
+    return this->_d;
+}
 
 void    PmergeMe::parseArgs(int ac, char **av) {
     if (ac < 2)
@@ -50,8 +57,109 @@ void    PmergeMe::parseArgs(int ac, char **av) {
     }
 }
 
-void    PmergeMe::mergeSort(std::vector<int> arr, int l, int r) {
-    
+void    PmergeMe::mergeVSort(std::vector<int> &v) {
+    if (v.size() <= 1)
+        return;
+
+    for (size_t i = 0; i < v.size() - 1; i += 2) {
+        if (v[i] > v[i + 1]) {
+            std::swap(v[i], v[i + 1]);
+        }
+    }
+
+    if (v.size() > 2) {
+        int mid = v.size() / 2;
+        std::vector<int> left(v.begin(), v.begin() + mid);
+        std::vector<int> right(v.begin() + mid, v.end());
+        mergeVSort(left);
+        mergeVSort(right);
+
+        std::vector<int> tmp;
+        std::merge(left.begin(), left.end(), right.begin(), right.end(), std::back_inserter(tmp));
+
+        for (size_t i = 0; i < tmp.size() - 1; i += 2) {
+            int second = tmp[i + 1];
+            tmp.erase(tmp.begin() + i + 1);
+            std::vector<int>::iterator it = std::lower_bound(tmp.begin(), tmp.end(), second);
+            tmp.insert(it, second);            
+        }
+
+        v = tmp;
+    }
+}
+
+void    PmergeMe::mergeDSort(std::deque<int> &d) {
+    if (d.size() <= 1)
+        return;
+
+    for (size_t i = 0; i < d.size() - 1; i += 2) {
+        if (d[i] > d[i + 1]) {
+            std::swap(d[i], d[i + 1]);
+        }
+    }
+
+    if (d.size() > 2) {
+        int mid = d.size() / 2;
+        std::deque<int> left(d.begin(), d.begin() + mid);
+        std::deque<int> right(d.begin() + mid, d.end());
+        mergeDSort(left);
+        mergeDSort(right);
+
+        std::deque<int> tmp;
+        std::merge(left.begin(), left.end(), right.begin(), right.end(), std::back_inserter(tmp));
+
+        for (size_t i = 0; i < tmp.size() - 1; i += 2) {
+            int second = tmp[i + 1];
+            tmp.erase(tmp.begin() + i + 1);
+            std::deque<int>::iterator it = std::lower_bound(tmp.begin(), tmp.end(), second);
+            tmp.insert(it, second);            
+        }
+        d = tmp;
+    }
+}
+
+double   PmergeMe::sortVector(std::vector<int> &v, bool _stdout) {
+    if (_stdout) {
+        std::cout << "Before: ";
+        printVector(v);
+    }
+    clock_t time = clock();
+    mergeVSort(v);
+    time = clock() - time;
+    if (_stdout) {
+        std::cout << "After: ";
+        printVector(v);
+    }
+    return ((double)time / CLOCKS_PER_SEC);
+}
+
+double    PmergeMe::sortDeque(std::deque<int> &d, bool _stdout) {
+    if (_stdout) {
+        std::cout << "Before: ";
+        printDeque(d);
+    }
+    clock_t time = clock();
+    mergeDSort(d);
+    time = clock() - time;
+    if (_stdout) {
+        std::cout << "After: ";
+        printDeque(d);
+    }
+    return ((double)time / CLOCKS_PER_SEC);
+}
+
+void    PmergeMe::printVector(std::vector<int> &v) {
+    for (size_t i = 0; i < v.size(); i++) {
+        std::cout << v[i] << " ";
+    }
+    std::cout << std::endl;
+}
+
+void    PmergeMe::printDeque(std::deque<int> &d) {
+    for (size_t i = 0; i < d.size(); i++) {
+        std::cout << d[i] << " ";
+    }
+    std::cout << std::endl;
 }
 
 PmergeMe::~PmergeMe() {}

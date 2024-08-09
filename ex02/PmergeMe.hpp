@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 06:07:12 by bkaztaou          #+#    #+#             */
-/*   Updated: 2024/08/05 09:19:00 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/08/09 04:56:55 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <climits>
+#include <utility>
 
 
 class PmergeMe {
@@ -32,11 +33,18 @@ public:
     PmergeMe &operator=(const PmergeMe &src);
     ~PmergeMe();
 
-    void parseArgs(int ac, char **av);
+    std::vector<int> & getV();
+    std::deque<int> & getD();
 
-    void mergeSort(std::vector<int> arr, int l, int r);
-    void merge(std::vector<int> arr, int l, int m, int r);
-    
+    void    parseArgs(int ac, char **av);
+    void    mergeVSort(std::vector<int> &v);
+    void    mergeDSort(std::deque<int> &d);
+    double  sortVector(std::vector<int> &v, bool _stdout);
+    double  sortDeque(std::deque<int> &d, bool _stdout);
+    void    printVector(std::vector<int> &v);
+    void    printDeque(std::deque<int> &d);
 };
+
+
 
 #endif
